@@ -22,4 +22,5 @@ from document.views import NoteView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('notes/', include('document.urls')),
+    path('api', include('document.api.urls')),
 ]
