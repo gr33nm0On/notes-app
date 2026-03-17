@@ -11,7 +11,7 @@ venv/
 *.log
 db.sqlite3
 media/
-staticfiles/
+static/
 
 # --- Secrets / env ---
 .env
@@ -30,3 +30,6 @@ staticfiles/
 htmlcov/
 dist/
 build/
+
+
+gunicorn.ctl
