@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать конспект</title>
+
+<style rel="stylesheets" href="{% static 'document/css/style.css' %}"></style>
+
+</head>
+<body>
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-title">Создать конспект</div>
+
+```
+    <div class="form-group">
+        <label for="name">Имя:</label>
+        <input id="name" type="text">
+    </div>
+
+    <div class="form-group">
+        <label for="description">Описание:</label>
+        <input id="description" type="text">
+    </div>
+
+    <div class="form-group">
+        <label for="files">Файлы:</label>
+        <input type="file"
+               name="files"
+               id="files"
+               multiple>
+        <small>Можно выбрать несколько файлов</small>
+    </div>
+
+    <button type="submit" id="submit-btn" class="submit-btn">
+        Отправить
+    </button>
+</div>
+
+</div>
+
+<script src="{% static 'document/js/main.js' %}"></script>
+
+</body>
+</html>
