@@ -53,4 +53,4 @@ class LoginView(View):
 class LogoutView(View):
     def post(self, request):
         logout(request)
-        return redirect("logout-view")
+        return redirect("login-view")
