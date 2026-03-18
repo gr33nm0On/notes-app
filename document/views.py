@@ -7,8 +7,9 @@ from document.models import Category
 
 class NoteCreateView(View):
     def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login-view')
         categories = Category.objects.all()
-        print(categories)
         return render(request, 'document/create.html', context={'categories': categories})
 
 class NoteListView(View):
