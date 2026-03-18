@@ -1,0 +1,16 @@
+{% extends 'document/base.html' %}
+
+{% load static %}
+
+{% block title %}Список конспектов{% endblock %}
+    <link rel="stylesheet" href="{% static 'document/css/style.css' %}">
+
+{% block content %}
+<div class="notes-container" id="notes-container">
+</div>
+{% endblock %}}
+
+
+{% block scripts %}
+<script src="{% static 'document/js/list.js' %}"></script>
+{% endblock %}

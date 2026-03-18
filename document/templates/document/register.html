@@ -1,0 +1,34 @@
+{% extends "document/base.html" %}
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'document/css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="auth-container">
+      <h2>Register</h2>
+      <form method="POST">
+        {% csrf_token %}
+
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+
+        <label for="{{ form.password1.id_for_label }}">Password</label>
+        {{ form.password1 }}
+
+        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+        {{ form.password2 }}
+
+        <button type="submit">Register</button>
+      </form>
+
+      <div class="extra-link">
+        Already have an account? <a href="{% url 'login-view' %}">Login here</a>
+      </div>
+    </div>
+</div>
+{% endblock %}

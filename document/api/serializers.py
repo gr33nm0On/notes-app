@@ -5,6 +5,12 @@ from document.models import Note, NoteFile, Category
 from django.core.validators import MinLengthValidator
 import os
 
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -29,6 +35,8 @@ class NoteFileSerializer(serializers.ModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField(read_only=True)
+
     name = serializers.CharField(
         max_length=100,
         validators=[MinLengthValidator(3)],
@@ -36,15 +44,10 @@ class NoteSerializer(serializers.ModelSerializer):
             'min_length': 'Название должно содержать минимум 3 символа'
         }
     )
+
     description = serializers.CharField(
         required=False,
         allow_blank=True,
-    )
-
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all(),
-        required=False,
-        allow_null=True
     )
 
     files_upload = serializers.ListField(
@@ -56,6 +59,15 @@ class NoteSerializer(serializers.ModelSerializer):
 
     files = NoteFileSerializer(many=True, read_only=True)
 
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all()
+    )
+
+    category_name = serializers.CharField(
+        source='category.name',
+        read_only=True
+    )
+
     class Meta:
         model = Note
         fields = [
@@ -63,10 +75,12 @@ class NoteSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'category',
+            'category_name',
             'files',
             'files_upload',
             'created_at',
-            'updated_at'
+            'updated_at',
+            'user',
         ]
         read_only_fields = ['created_at', 'updated_at']
 
@@ -91,3 +105,6 @@ class NoteSerializer(serializers.ModelSerializer):
             NoteFile.objects.create(note=instance, file=file)
 
         return instance
+
+    def get_user(self, obj):
+        return obj.user.username
