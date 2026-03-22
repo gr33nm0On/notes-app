@@ -1,7 +1,6 @@
 const submitBtn = document.getElementById("submit-btn");
 
 submitBtn.addEventListener("click", async function(event) {
-    console.log("123");
     const name = document.getElementById("name").value;
     const description = document.getElementById("description").value;
     const category = document.getElementById("category").value;
@@ -16,9 +15,7 @@ submitBtn.addEventListener("click", async function(event) {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
-    formData.append('category', parseInt(category));
-
-    console.log(formData);
+    formData.append('category', category);
 
     for (let i = 0; i < files.length; i++) {
         formData.append('files_upload', files[i]);

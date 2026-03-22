@@ -59,14 +59,11 @@ class NoteSerializer(serializers.ModelSerializer):
 
     files = NoteFileSerializer(many=True, read_only=True)
 
-    category = serializers.PrimaryKeyRelatedField(
-        queryset=Category.objects.all()
-    )
+    category_name = serializers.SerializerMethodField(read_only=True)
 
-    category_name = serializers.CharField(
-        source='category.name',
-        read_only=True
-    )
+    likes_count = serializers.SerializerMethodField(read_only=True)
+
+    isliked = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Note
@@ -81,13 +78,21 @@ class NoteSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             'user',
+            'likes_count',
+            'likes',
+            'isliked'
         ]
         read_only_fields = ['created_at', 'updated_at']
 
     def create(self, validated_data):
         files_to_upload = validated_data.pop('files_upload', [])
 
+        likes = validated_data.pop('likes', None)
+
         note = Note.objects.create(**validated_data)
+
+        if likes is not None:
+            note.likes.set(likes)
 
         for file in files_to_upload:
             NoteFile.objects.create(note=note, file=file)
@@ -108,3 +113,12 @@ class NoteSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         return obj.user.username
+
+    def get_category_name(self, obj):
+        return obj.category.name
+
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+    def get_isliked(self, obj):
+        return obj.likes.filter(user=obj.user).exists()
