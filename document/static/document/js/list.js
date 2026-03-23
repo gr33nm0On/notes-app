@@ -1,25 +1,26 @@
-async function loadNotes() {
+let currentPage = 1;
+const page_size = 5;
+
+async function loadNotes(page = 1) {
     const container = document.getElementById('notes-container');
-    container.innerHTML = '';
 
     try {
-        const response = await fetch('/api/note/');
-        const notes = await response.json();
+        const response = await fetch(`/api/note/?page=${page}`);
+        if (!response.ok) throw new Error('Ошибка сети');
+
+        const data = await response.json();
+
+        container.innerHTML = '';
+
+        const notes = data.results;
 
         notes.forEach(note => {
-            console.log(note);
-
             const card = document.createElement('div');
             card.className = 'form-card';
 
-            let filesHTML = '';
-            if (note.files && note.files.length > 0) {
-                filesHTML = '<ul>';
-                note.files.forEach(f => {
-                    filesHTML += `<li><a href="${f.url}" target="_blank">${f.name}</a></li>`;
-                });
-                filesHTML += '</ul>';
-            }
+            const filesHTML = note.files && note.files.length > 0
+                ? `<ul>${note.files.map(f => `<li><a href="${f.url}" target="_blank">${f.name}</a></li>`).join('')}</ul>`
+                : '<p class="empty">Нет файлов</p>';
 
             card.innerHTML = `
                 <div class="content">
@@ -48,22 +49,29 @@ async function loadNotes() {
                     </div>
                 </div>
 
-                <button
-                    class="like-btn"
-                    id="like-btn-${note.id}"
-                    data-liked="${note.isliked}"
-                    onclick="handleLikeClick(this, ${note.id})"
-                >
-                    <span class="like-icon">❤</span>
-                    <span class="like-count">${note.likes_count}</span>
-                </button>
+                <div class="card-footer">
+                    <button
+                        class="like-btn ${note.isliked ? 'liked' : ''}"
+                        data-liked="${note.isliked}"
+                        onclick="handleLikeClick(this, ${note.id})"
+                    >
+                        <span class="like-icon">${note.isliked ? '♥' : '♡'}</span>
+                        <span class="like-count">${note.likes_count}</span>
+                    </button>
+
+                    <div class="views-block">
+                        👁 ${note.views_count}
+                    </div>
+                </div>
             `;
 
             container.appendChild(card);
-
-            const btn = document.getElementById(`like-btn-${note.id}`);
-            applyInitialLikeStyle(btn);
         });
+
+        renderPagination(data.next, data.previous);
+        const pageId = document.getElementById("page-id");
+
+        pageId.innerText = `${page}/${Math.ceil(data.count / page_size)}`;
 
     } catch (error) {
         container.innerHTML = '<p>Ошибка при загрузке заметок</p>';
@@ -71,55 +79,60 @@ async function loadNotes() {
     }
 }
 
+function renderPagination(nextUrl, prevUrl) {
+    const controls = document.getElementById('pagination-controls');
+    if (!controls) return;
 
-function applyInitialLikeStyle(btn) {
-    const isLiked = btn.dataset.liked === "true";
+    controls.innerHTML = '';
 
-    const icon = btn.querySelector(".like-icon");
+    if (prevUrl) {
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '← Назад';
+        prevBtn.onclick = () => {
+            currentPage--;
+            loadNotes(currentPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        controls.appendChild(prevBtn);
+    }
 
-    if (isLiked) {
-        btn.classList.add("liked");
-        icon.textContent = "♥";
-    } else {
-        btn.classList.remove("liked");
-        icon.textContent = "♡";
+    if (nextUrl) {
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = 'Вперед →';
+        nextBtn.onclick = () => {
+            currentPage++;
+            loadNotes(currentPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        controls.appendChild(nextBtn);
     }
 }
 
-
-function updateLikeBtn(btn, id) {
-    let isLiked = btn.dataset.liked === "true";
-
-    isLiked = !isLiked;
-    btn.dataset.liked = isLiked;
-
+function updateLikeUI(btn, isLiked) {
     const icon = btn.querySelector(".like-icon");
-
-    if (isLiked) {
-        btn.classList.add("liked");
-        icon.textContent = "♥";
-    } else {
-        btn.classList.remove("liked");
-        icon.textContent = "♡";
-    }
-
     const countEl = btn.querySelector(".like-count");
-    let count = parseInt(countEl.textContent);
 
-    countEl.textContent = isLiked ? count + 1 : count - 1;
+    let count = parseInt(countEl.textContent) || 0;
+
+    btn.dataset.liked = isLiked;
+    icon.textContent = isLiked ? "♥" : "♡";
+    countEl.textContent = Math.max(0, isLiked ? count + 1 : count - 1);
+
+    btn.classList.toggle("liked", isLiked);
 }
-
 
 async function handleLikeClick(btn, id) {
-    updateLikeBtn(btn, id);
+    const currentlyLiked = btn.dataset.liked === "true";
+
+    updateLikeUI(btn, !currentlyLiked);
 
     try {
-        await fetch(`/api/note/${id}/like/`);
+        const response = await fetch(`/api/note/${id}/like/`);
+        if (!response.ok) throw new Error();
     } catch (error) {
-        console.error("Like request failed:", error);
-
-        updateLikeBtn(btn, id);
+        updateLikeUI(btn, currentlyLiked);
+        console.error("Ошибка при лайке:", error);
     }
 }
 
-window.onload = loadNotes;
+window.onload = () => loadNotes(currentPage);

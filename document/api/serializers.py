@@ -65,6 +65,8 @@ class NoteSerializer(serializers.ModelSerializer):
 
     isliked = serializers.SerializerMethodField(read_only=True)
 
+    views_count = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Note
         fields = [
@@ -79,8 +81,8 @@ class NoteSerializer(serializers.ModelSerializer):
             'updated_at',
             'user',
             'likes_count',
-            'likes',
-            'isliked'
+            'isliked',
+            'views_count',
         ]
         read_only_fields = ['created_at', 'updated_at']
 
@@ -122,3 +124,6 @@ class NoteSerializer(serializers.ModelSerializer):
 
     def get_isliked(self, obj):
         return obj.likes.filter(user=obj.user).exists()
+
+    def get_views_count(self, obj):
+        return obj.views.count()

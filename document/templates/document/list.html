@@ -1,15 +1,15 @@
 {% extends 'document/base.html' %}
-
 {% load static %}
 
 {% block title %}Список конспектов{% endblock %}
-    <link rel="stylesheet" href="{% static 'document/css/style.css' %}">
 
 {% block content %}
-<div class="notes-container" id="notes-container">
+<div class="main-content-wrapper" style="display: flex; flex-direction: column; width: 100%;">
+    <div id="notes-container" class="notes-grid notes-container"></div>
+    <div id="pagination-controls"></div>
+    <div id="page-id">0/0</div>
 </div>
-{% endblock %}}
-
+{% endblock %}
 
 {% block scripts %}
 <script src="{% static 'document/js/list.js' %}"></script>

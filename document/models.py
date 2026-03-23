@@ -42,3 +42,7 @@ class NoteFile(models.Model):
 class Like(models.Model):
     note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+
+class View(models.Model):
+    note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='views')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='views')

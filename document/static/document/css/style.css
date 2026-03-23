@@ -70,14 +70,6 @@ body {
   font-weight: bold;
 }
 
-.notes-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  width: 75%;
-  align-items: start;
-}
-
 .form-card {
   background: #1e293b;
   padding: 20px;
@@ -228,4 +220,70 @@ button#find { background: #3b82f6; }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #64748b;
+}
+
+.notes-grid {
+    display: grid;
+    gap: 20px;
+    padding: 20px;
+    grid-template-columns: repeat(auto-fit, 300px);
+    justify-content: center;
+}
+
+.form-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.empty {
+    color: #999;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.like-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.like-btn.liked {
+    color: #e74c3c;
+}
+
+.views-block {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Пагинация */
+#pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+#pagination-controls button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#pagination-controls button:hover {
+    background: #43a047;
 }
