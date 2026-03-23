@@ -1,11 +1,31 @@
 let currentPage = 1;
 const page_size = 5;
 
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+
+    return {
+        search: params.get("search"),
+        from: params.get("from"),
+        to: params.get("to"),
+    };
+}
+
 async function loadNotes(page = 1) {
     const container = document.getElementById('notes-container');
 
+    const { search, from, to } = getQueryParams();
+
+    const queryParams = new URLSearchParams();
+    queryParams.append("page", page);
+
+    if (search) queryParams.append("search", search);
+    if (from) queryParams.append("from", from);
+    if (to) queryParams.append("to", to);
+
     try {
-        const response = await fetch(`/api/note/?page=${page}`);
+        const response = await fetch(`/api/note/?${queryParams.toString()}`);
+
         if (!response.ok) throw new Error('Ошибка сети');
 
         const data = await response.json();
@@ -44,7 +64,7 @@ async function loadNotes(page = 1) {
                     <div class="form-group">
                         <label>Файлы:</label>
                         <div class="files-block">
-                            ${filesHTML || '<p>Нет файлов</p>'}
+                            ${filesHTML}
                         </div>
                     </div>
                 </div>

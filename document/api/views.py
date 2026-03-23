@@ -11,12 +11,30 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import filters
 
+from django_filters.rest_framework import DjangoFilterBackend
 
 class NoteViewSet(viewsets.ModelViewSet):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
     pagination_class = NotePagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'description', 'user__username']
+
+    def get_queryset(self):
+        queryset = Note.objects.all()
+
+        from_date = self.request.GET.get('from')
+        to_date = self.request.GET.get('to')
+
+        if from_date:
+            queryset = queryset.filter(created_at__date__gte=from_date)
+
+        if to_date:
+            queryset = queryset.filter(created_at__date__lte=to_date)
+
+        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -41,7 +59,7 @@ class NoteViewSet(viewsets.ModelViewSet):
         if new_views:
             View.objects.bulk_create(new_views)
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(detail=True, methods=['get', 'post'], permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
         note = self.get_object()
         like_queryset = Like.objects.filter(user=request.user, note=note)
@@ -52,6 +70,9 @@ class NoteViewSet(viewsets.ModelViewSet):
         else:
             Like.objects.create(user=request.user, note=note)
             return Response({'liked': True}, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class UserViewSet(viewsets.ModelViewSet):

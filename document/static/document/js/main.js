@@ -6,6 +6,7 @@ submitBtn.addEventListener("click", async function(event) {
     const category = document.getElementById("category").value;
     const fileInput = document.getElementById("files");
     const files = fileInput.files;
+    const date = document.getElementById("date").value;
 
     if (!name || name.length < 3) {
         alert("Название должно быть минимум 3 символа");
@@ -16,6 +17,7 @@ submitBtn.addEventListener("click", async function(event) {
     formData.append('name', name);
     formData.append('description', description);
     formData.append('category', category);
+    formData.append('date', date);
 
     for (let i = 0; i < files.length; i++) {
         formData.append('files_upload', files[i]);

@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -57,7 +59,7 @@ class NoteSerializer(serializers.ModelSerializer):
         help_text="Список файлов для загрузки"
     )
 
-    files = NoteFileSerializer(many=True, read_only=True)
+    files = NoteFileSerializer(many=True, read_only=True, required=True)
 
     category_name = serializers.SerializerMethodField(read_only=True)
 
@@ -66,6 +68,8 @@ class NoteSerializer(serializers.ModelSerializer):
     isliked = serializers.SerializerMethodField(read_only=True)
 
     views_count = serializers.SerializerMethodField(read_only=True)
+
+    date = serializers.DateField(required=False)
 
     class Meta:
         model = Note
@@ -83,6 +87,7 @@ class NoteSerializer(serializers.ModelSerializer):
             'likes_count',
             'isliked',
             'views_count',
+            'date'
         ]
         read_only_fields = ['created_at', 'updated_at']
 

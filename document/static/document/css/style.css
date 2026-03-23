@@ -287,3 +287,74 @@ button#find { background: #3b82f6; }
 #pagination-controls button:hover {
     background: #43a047;
 }
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-left a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 20px;
+}
+
+/* Общий стиль инпутов */
+.search-bar input[type="text"],
+.search-bar input[type="date"] {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+/* Фокус */
+.search-bar input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Кнопка */
+.search-bar button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4a90e2;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.search-bar button:hover {
+    background-color: #357bd8;
+}
+
+
+@media (max-width: 900px) {
+    .nav-left {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-bar {
+        flex-wrap: wrap;
+    }
+}
+
+#page-id {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #94a3b8;
+}

@@ -15,8 +15,16 @@
 <nav class="navbar">
 
 <div class="nav-left">
-    <a href="{% url 'list-view' %}">Notes</a>
     <a href="{% url 'create-view' %}">Create note</a>
+    <a href="{% url 'list-view' %}">Notes</a>
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search...">
+
+        <input type="date" id="search-date-from">
+        <input type="date" id="search-date-to">
+
+        <button id="search-submit">Search</button>
+    </div>
 </div>
 
 <div class="nav-right">
@@ -45,6 +53,7 @@
 {% block content %}{% endblock %}
 </div>
 
+<script src="{% static 'document/js/search.js' %}"></script>
 {% block scripts %}{% endblock %}
 
 </body>
