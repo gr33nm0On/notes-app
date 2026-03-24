@@ -59,7 +59,7 @@ class NoteSerializer(serializers.ModelSerializer):
         help_text="Список файлов для загрузки"
     )
 
-    files = NoteFileSerializer(many=True, required=True)
+    files = NoteFileSerializer(many=True, read_only=True)
 
     category_name = serializers.SerializerMethodField(read_only=True)
 
