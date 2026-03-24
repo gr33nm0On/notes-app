@@ -2,6 +2,7 @@ import datetime
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework.exceptions import ValidationError
 
 from document.models import Note, NoteFile, Category
 from django.core.validators import MinLengthValidator
@@ -55,7 +56,7 @@ class NoteSerializer(serializers.ModelSerializer):
     files_upload = serializers.ListField(
         child=serializers.FileField(),
         write_only=True,
-        required=False,
+        required=True,
         help_text="Список файлов для загрузки"
     )
 
