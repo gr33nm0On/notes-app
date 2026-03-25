@@ -1,5 +1,6 @@
 let currentPage = 1;
 const page_size = 5;
+const URL_API = JSON.parse(document.getElementById('url-api').textContent);
 
 function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
@@ -24,7 +25,7 @@ async function loadNotes(page = 1) {
     if (to) queryParams.append("to", to);
 
     try {
-        const response = await fetch(`/api/note/?${queryParams.toString()}`);
+        const response = await fetch(URL_API + `?${queryParams.toString()}`);
 
         if (!response.ok) throw new Error('Ошибка сети');
 

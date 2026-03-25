@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
 
-from document.models import Note, NoteFile, Category
+from document.models import Note, NoteFile, Category, Like
 from django.core.validators import MinLengthValidator
 import os
 
@@ -133,3 +133,12 @@ class NoteSerializer(serializers.ModelSerializer):
 
     def get_views_count(self, obj):
         return obj.views.count()
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    note = NoteSerializer(read_only=True)
+
+    class Meta:
+        model = Like
+        fields = "__all__"

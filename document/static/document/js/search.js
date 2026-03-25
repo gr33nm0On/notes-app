@@ -1,3 +1,5 @@
+const URL_SEARCH = JSON.parse(document.getElementById('url-search').textContent);
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("search-input");
     const dateFrom = document.getElementById("search-date-from");
@@ -23,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             params.append("to", toValue);
         }
 
-        return `/notes/?${params.toString()}`;
+        return URL_SEARCH + `?${params.toString()}`;
     }
 
     function performSearch() {

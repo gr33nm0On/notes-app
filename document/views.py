@@ -14,7 +14,16 @@ class NoteCreateView(View):
 
 class NoteListView(View):
     def get(self, request):
-        return render(request, 'document/list.html')
+        url_api = "/api/note/"
+        url_search = "/notes/"
+        return render(request, 'document/list.html', context={'url_api': url_api, 'url_search': url_search})
+
+
+class LikedNoteListView(View):
+    def get(self, request):
+        url_api = "/api/note/liked/"
+        url_search = "/notes/liked/"
+        return render(request, 'document/list.html', context={'url_api': url_api, 'url_search': url_search})
 
 
 class RegisterView(View):

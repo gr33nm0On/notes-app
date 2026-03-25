@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from .pagination import NotePagination
 from .permissions import IsOwner
 
-from document.api.serializers import NoteSerializer, UserSerializer
+from document.api.serializers import NoteSerializer, UserSerializer, LikeSerializer
 from document.models import Note, Like
 
 from rest_framework.decorators import action
@@ -73,6 +73,19 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsOwner])
+    def liked(self, request):
+        liked_notes = Note.objects.filter(likes__user=request.user).distinct()
+        liked_notes = self.filter_queryset(liked_notes)
+
+        page = self.paginate_queryset(liked_notes)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(liked_notes, many=True)
+        return Response(serializer.data)
 
 
 class UserViewSet(viewsets.ModelViewSet):
