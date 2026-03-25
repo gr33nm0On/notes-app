@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}Chat{% endblock %}</title>
+
+<link rel="stylesheet" href="{% static 'document/css/style.css' %}">
+{% block style %}
+{% endblock %}
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<div class="nav-left">
+    <a href="{% url 'create-view' %}">Create note</a>
+    <a href="{% url 'list-view' %}">Notes</a>
+    {% block navbar%}
+    {% endblock %}
+</div>
+
+<div class="nav-right">
+
+{% if user.is_authenticated %}
+
+<span class="nav-user"><a href="{% url 'liked-view' %}">{{ user.username }}</a></span>
+
+<form method="POST" action="{% url 'logout-view' %}" class="logout-form">
+{% csrf_token %}
+<button type="submit">Logout</button>
+</form>
+
+{% else %}
+
+<a href="{% url 'login-view' %}">Login</a>
+<a href="{% url 'register-view' %}">Register</a>
+
+{% endif %}
+
+</div>
+
+</nav>
+
+<div class="page">
+{% block content %}{% endblock %}
+</div>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
