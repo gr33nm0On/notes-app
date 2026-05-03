@@ -9,6 +9,8 @@ import os
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=True)
+    notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = Category
         fields = "__all__"

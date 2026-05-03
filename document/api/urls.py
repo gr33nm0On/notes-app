@@ -5,6 +5,7 @@ from document.api import views
 router = routers.DefaultRouter()
 router.register("user", views.UserViewSet)
 router.register("note", views.NoteViewSet)
+router.register("cats", views.CategoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

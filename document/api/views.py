@@ -1,10 +1,10 @@
-from document.models import View
+from document.models import View, Category
 from django.contrib.auth.models import User
 
 from .pagination import NotePagination
 from .permissions import IsOwner
 
-from document.api.serializers import NoteSerializer, UserSerializer, LikeSerializer
+from document.api.serializers import NoteSerializer, UserSerializer, LikeSerializer, CategorySerializer
 from document.models import Note, Like
 
 from rest_framework.decorators import action
@@ -101,3 +101,7 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
