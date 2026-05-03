@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (fromValue) {
-            params.append("from", fromValue);
+            params.append("from_date", fromValue);
         }
 
         if (toValue) {
-            params.append("to", toValue);
+            params.append("to_date", toValue);
         }
 
         return URL_SEARCH + `?${params.toString()}`;

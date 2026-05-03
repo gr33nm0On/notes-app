@@ -7,8 +7,8 @@ function getQueryParams() {
 
     return {
         search: params.get("search"),
-        from: params.get("from"),
-        to: params.get("to"),
+        from: params.get("from_date"),
+        to: params.get("to_date"),
     };
 }
 
@@ -22,8 +22,8 @@ async function loadNotes(page = 1) {
     queryParams.append("page_size", page_size);
 
     if (search) queryParams.append("search", search);
-    if (from) queryParams.append("from", from);
-    if (to) queryParams.append("to", to);
+    if (from) queryParams.append("from_date", from);
+    if (to) queryParams.append("to_date", to);
 
     try {
         const response = await fetch(URL_API + `?${queryParams.toString()}`);

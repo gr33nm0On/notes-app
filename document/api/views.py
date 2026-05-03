@@ -1,6 +1,7 @@
 from document.models import View, Category
 from django.contrib.auth.models import User
 
+from .filters import NoteFilter
 from .pagination import NotePagination
 from .permissions import IsOwner
 
@@ -21,20 +22,14 @@ class NoteViewSet(viewsets.ModelViewSet):
     pagination_class = NotePagination
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['name', 'description', 'user__username']
+    filterset_class = NoteFilter
 
-    def get_queryset(self):
-        queryset = Note.objects.all()
-
-        from_date = self.request.GET.get('from')
-        to_date = self.request.GET.get('to')
-
-        if from_date:
-            queryset = queryset.filter(created_at__date__gte=from_date)
-
-        if to_date:
-            queryset = queryset.filter(created_at__date__lte=to_date)
-
-        return queryset
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            return [IsOwner()]
+        elif self.action == 'create':
+            return [IsAuthenticated()]
+        return [AllowAny()]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -51,10 +46,14 @@ class NoteViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def _handle_views(self, user, notes):
-        viewed_ids = View.objects.filter(user=user, note__in=notes).values_list('note_id', flat=True)
+        existing = set(
+            View.objects.filter(user=user, note__in=notes)
+            .values_list('note_id', flat=True)
+        )
+
         new_views = [
             View(user=user, note=note)
-            for note in notes if note.id not in viewed_ids
+            for note in notes if note.id not in existing
         ]
         if new_views:
             View.objects.bulk_create(new_views)
@@ -74,7 +73,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsOwner])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def liked(self, request):
         liked_notes = Note.objects.filter(likes__user=request.user).distinct()
         liked_notes = self.filter_queryset(liked_notes)
