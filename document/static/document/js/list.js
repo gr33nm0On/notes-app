@@ -1,5 +1,5 @@
 let currentPage = 1;
-const page_size = 5;
+const page_size = 20;
 const URL_API = JSON.parse(document.getElementById('url-api').textContent);
 
 function getQueryParams() {
@@ -19,6 +19,7 @@ async function loadNotes(page = 1) {
 
     const queryParams = new URLSearchParams();
     queryParams.append("page", page);
+    queryParams.append("page_size", page_size);
 
     if (search) queryParams.append("search", search);
     if (from) queryParams.append("from", from);

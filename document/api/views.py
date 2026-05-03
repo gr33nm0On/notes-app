@@ -59,7 +59,7 @@ class NoteViewSet(viewsets.ModelViewSet):
         if new_views:
             View.objects.bulk_create(new_views)
 
-    @action(detail=True, methods=['get', 'post'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def like(self, request, pk=None):
         note = self.get_object()
         like_queryset = Like.objects.filter(user=request.user, note=note)

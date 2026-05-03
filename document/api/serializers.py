@@ -2,7 +2,6 @@ import datetime
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidationError
 
 from document.models import Note, NoteFile, Category, Like
 from django.core.validators import MinLengthValidator
@@ -15,9 +14,18 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'password')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
+        return user
 
 class NoteFileSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
@@ -56,11 +64,17 @@ class NoteSerializer(serializers.ModelSerializer):
     files_upload = serializers.ListField(
         child=serializers.FileField(),
         write_only=True,
-        required=True,
-        help_text="Список файлов для загрузки"
+        required=False,
+        help_text="Список файлов для загрузки",
+        error_messages={'required': 'Please upload a file/files.'}
     )
 
     files = NoteFileSerializer(many=True, read_only=True)
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        required=True,
+    )
 
     category_name = serializers.SerializerMethodField(read_only=True)
 
